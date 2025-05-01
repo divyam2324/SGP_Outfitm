@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
+import 'package:url_launcher/url_launcher.dart';
 
 class StylesPage extends StatefulWidget {
   final Function(List<Map<String, dynamic>>) onFavoriteSelected;
@@ -31,7 +31,7 @@ class _StylesPageState extends State<StylesPage> {
       "name": "Office Blazer",
       "category": "Formal",
       "image": "assets/outfit3.jpg",
-      "link": "https://www.amazon.in/TAHVO-Blazer-Fabric-Single-Breasted/dp/B0CW17RM84/ref=sr_1_2?dib=eyJ2IjoiMSJ9.-J5RAM6obGouS-y2tI-A2YnNrKdTDhFAY452m4VQOsCYNoPzwfMQOu_lSUfiIEkqFWwMm3hHsBxlR_FNKZ83a7zsCj_EBMWvOMOYSdHbvc0ILuZ-rUwnZOm19pQ7xM6GQLpUSW3UW-xZMFs4sVUzT_N2MAHIguLNoFldTeJ-zSVqWBC4WZmmCZPM-0gGnu30yU2Fn7GrWcg4KVq6t8VtqGceoHvDzq0Y5ENpTPlvafaSaFgEBt9NNDYcwiOxDmCQ6xuTXFlffXHk0gkh6mlpU8FhSsy2kvZKaWurGozNgMc._frUdusgLHD9N3wDmkiVGM45n3KXU49RRyE3aKLGpEo&dib_tag=se&keywords=grey%2Bblazer%2Bfor%2Bmen&qid=1743615193&sr=8-2&th=1&psc=1"
+      "link": "https://www.amazon.in/TAHVO-Blazer-Fabric-Single-Breasted/dp/B0CW17RM84/"
     },
     {
       "name": "Jeans & Hoodie",
@@ -67,103 +67,234 @@ class _StylesPageState extends State<StylesPage> {
     var filteredStyles = styles.where((item) => selectedFilter == "All" || item["category"] == selectedFilter).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF8ECAE6), // Light Blue
+              Color(0xFF023047), // Deep Navy Blue
+            ],
+          ),
         ),
-        title: Text("Styles"),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildFilterButton("All"),
-                _buildFilterButton("Formal"),
-                _buildFilterButton("Informal"),
-              ],
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(8.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 0.8,
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(context),
+              _buildFilterOptions(),
+              Expanded(
+                child: _buildStylesGrid(filteredStyles),
               ),
-              itemCount: filteredStyles.length,
-              itemBuilder: (context, index) {
-                return _buildStyleCard(filteredStyles[index]);
-              },
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          Text(
+            "Explore Styles",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
+          SizedBox(width: 40), // For balance
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterOptions() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildFilterButton("All"),
+          _buildFilterButton("Formal"),
+          _buildFilterButton("Informal"),
         ],
       ),
     );
   }
 
   Widget _buildFilterButton(String filter) {
-    return ElevatedButton(
-      onPressed: () {
+    bool isSelected = selectedFilter == filter;
+    
+    return GestureDetector(
+      onTap: () {
         setState(() {
           selectedFilter = filter;
         });
       },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: selectedFilter == filter ? Colors.black : Colors.grey[300],
-        foregroundColor: selectedFilter == filter ? Colors.white : Colors.black,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xFFFB8500) : Colors.white.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: Color(0xFFFB8500).withOpacity(0.5),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ] : [],
+        ),
+        child: Text(
+          filter,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 16,
+          ),
+        ),
       ),
-      child: Text(filter),
+    );
+  }
+
+  Widget _buildStylesGrid(List<Map<String, dynamic>> filteredStyles) {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: filteredStyles.length,
+        itemBuilder: (context, index) {
+          return _buildStyleCard(filteredStyles[index]);
+        },
+      ),
     );
   }
 
   Widget _buildStyleCard(Map<String, dynamic> style) {
     bool isLiked = favoriteItems.contains(style);
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 4,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => _launchURL(style["link"]), // Open link when tapped
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.asset(style["image"], fit: BoxFit.cover, width: double.infinity),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  style["name"],
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.red : Colors.grey),
-                  onPressed: () {
-                    toggleFavorite(style);
-                  },
-                ),
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 5),
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // Image with tap handler
+            GestureDetector(
+              onTap: () => _launchURL(style["link"]),
+              child: Image.asset(
+                style["image"],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            // Gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                  stops: [0.6, 1.0],
+                ),
+              ),
+            ),
+            // Item name and like button
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        style["name"],
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => toggleFavorite(style),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isLiked ? Color(0xFFFB8500) : Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Shop button
+            Positioned(
+              top: 12,
+              right: 12,
+              child: GestureDetector(
+                onTap: () => _launchURL(style["link"]),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFB8500),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.shopping_cart, color: Colors.white, size: 16),
+                      SizedBox(width: 4),
+                      Text(
+                        "Shop",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

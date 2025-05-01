@@ -41,56 +41,146 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: _editProfile, // Navigate to Edit Profile Screen
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF8ECAE6), // Light Blue
+              Color(0xFF023047), // Deep Navy Blue
+            ],
           ),
-        ],
-        backgroundColor: Color(0xFF023047),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Color(0xFFFB8500),
-                child: Icon(Icons.person, size: 50, color: Colors.white),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 30),
+                        _buildProfileAvatar(),
+                        SizedBox(height: 30),
+                        _buildProfileCard(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            _buildProfileInfo("Name", name),
-            _buildProfileInfo("Email", email),
-            _buildProfileInfo("Gender", gender),
-            _buildProfileInfo("Age", age),
-            _buildProfileInfo("Skin Tone", skinTone),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProfileInfo(String label, String value) {
+  Widget _buildAppBar() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            label,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "Profile",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 18, color: Colors.black87),
+          IconButton(
+            icon: Icon(Icons.edit, color: Colors.white),
+            onPressed: _editProfile,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProfileAvatar() {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 15,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: CircleAvatar(
+        radius: 65,
+        backgroundColor: Color(0xFFFB8500),
+        child: CircleAvatar(
+          radius: 62,
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.person,
+            size: 80,
+            color: Color(0xFFFB8500),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 15,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildProfileInfo("Name", name),
+          Divider(height: 30, thickness: 1),
+          _buildProfileInfo("Email", email),
+          Divider(height: 30, thickness: 1),
+          _buildProfileInfo("Gender", gender),
+          Divider(height: 30, thickness: 1),
+          _buildProfileInfo("Age", age),
+          Divider(height: 30, thickness: 1),
+          _buildProfileInfo("Skin Tone", skinTone),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileInfo(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black54,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF023047),
+          ),
+        ),
+      ],
     );
   }
 }

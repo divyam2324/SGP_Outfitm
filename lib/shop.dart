@@ -44,7 +44,7 @@ class ShopPage extends StatelessWidget {
     },
     {
       'name': 'AJIO',
-      'image': 'assets/hm_logo.png', // Replace with actual AJIO logo
+      'image': 'assets/ajio.jpg', // Replace with actual AJIO logo
       'url': 'https://www.ajio.com',
       'color': Color(0xFF2979FF), // Blue color for AJIO
     },

@@ -6,6 +6,7 @@ import 'shop.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'select.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,22 +17,26 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, dynamic>> outfitItems = [
     {
       'image': 'assets/outfit3.jpg',
-      'name': 'Summer Casual',
-      'description': 'Perfect for warm days',
+      'name': 'Office Blazer',
+      'description': 'Perfect for formal occasions',
+      'link':'https://www.amazon.in/TAHVO-Blazer-Fabric-Single-Breasted/dp/B0CW17RM84/',
     },
     {
       'image': 'assets/oversized.jpg',
-      'name': 'Urban Streetwear',
+      'name': 'Casual T-Shirt',
       'description': 'Trendy and comfortable',
+      'link':
+          'https://www.flipkart.com/go-crazy-printed-men-round-neck-black-t-shirt/p/itmd44efe3440601',
     },
     {
       'image': 'assets/Bussiness_suit.jpg',
-      'name': 'Business Professional',
+      'name': 'Business Suit',
       'description': 'For formal occasions',
+      'link': 'https://www.zara.com/in/en/slim-fit-suit-blazer-p09722605.html',
     },
   ];
 
-  String username = "UserName"; // Change dynamically if needed
+  String username = "Divyam Lavri"; // Change dynamically if needed
   List<Map<String, dynamic>> favoriteItems = []; // Store liked styles
   CarouselSliderController carouselController = CarouselSliderController();
   int _currentCarouselIndex = 0;
@@ -250,35 +255,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                   SizedBox(height: 12),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Color(0xFFFB8500),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text(
-                          "Try Now",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final String? urlString = item['link'];
+                        if (urlString != null && urlString.isNotEmpty) {
+                          final url = Uri.parse(urlString);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Could not launch URL')),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error launching URL')),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Color(0xFFFB8500),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      SizedBox(width: 12),
-                      IconButton(
-                        icon: Icon(Icons.favorite_border, color: Colors.white),
-                        onPressed: () {},
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
                       ),
-                    ],
+                    ),
+                    child: Text(
+                      "Try Now",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),

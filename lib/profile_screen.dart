@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sgp/editprofile.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -11,19 +12,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String email = "divyam.lavri@example.com";
   String gender = "Male";
   String age = "21";
-  String skinTone = "Medium"; // Can be used in Outfit Matching logic
+  String skinTone = "Medium";
+  String profileImageUrl =
+      "https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&accessoriesType=Blank&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=Blue&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light";
+
+  bool useBitmoji = true;
 
   void _editProfile() async {
     final updatedUser = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfileScreen(
-          name: name,
-          email: email,
-          gender: gender,
-          age: age,
-          skinTone: skinTone,
-        ),
+        builder:
+            (context) => EditProfileScreen(
+              name: name,
+              email: email,
+              gender: gender,
+              age: age,
+              skinTone: skinTone,
+            ),
       ),
     );
 
@@ -36,6 +42,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         skinTone = updatedUser["skinTone"];
       });
     }
+  }
+
+  void _toggleImageType() {
+    setState(() {
+      useBitmoji = !useBitmoji;
+    });
   }
 
   @override
@@ -65,6 +77,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         SizedBox(height: 30),
                         _buildProfileAvatar(),
+                        SizedBox(height: 10),
+                        _buildImageToggleButton(),
                         SizedBox(height: 30),
                         _buildProfileCard(),
                       ],
@@ -117,15 +131,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: CircleAvatar(
         radius: 65,
         backgroundColor: Color(0xFFFB8500),
-        child: CircleAvatar(
-          radius: 62,
-          backgroundColor: Colors.white,
-          child: Icon(
-            Icons.person,
-            size: 80,
-            color: Color(0xFFFB8500),
-          ),
-        ),
+        child:
+            useBitmoji
+                ? ClipOval(
+                  child: Image.asset(
+                    'assets/avatar.jpg',
+                    fit: BoxFit.cover,
+                    width: 120,
+                    height: 120,
+                    errorBuilder:
+                        (context, error, stackTrace) => Icon(
+                          Icons.person,
+                          size: 80,
+                          color: Color(0xFFFB8500),
+                        ),
+                  ),
+                )
+                : CircleAvatar(
+                  radius: 62,
+                  backgroundImage: AssetImage('assets/profile_photo.jpg'),
+                  onBackgroundImageError:
+                      (exception, stackTrace) => Icon(
+                        Icons.person,
+                        size: 80,
+                        color: Color(0xFFFB8500),
+                      ),
+                ),
+      ),
+    );
+  }
+
+  Widget _buildImageToggleButton() {
+    return TextButton.icon(
+      onPressed: _toggleImageType,
+      icon: Icon(useBitmoji ? Icons.face : Icons.person, color: Colors.white),
+      label: Text(
+        useBitmoji ? "Switch to Photo" : "Switch to Bitmoji",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
